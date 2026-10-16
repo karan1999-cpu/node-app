@@ -8,9 +8,23 @@ Swap contacts by QR. Version 1 is an Android app that needs no server:
 - **Scan**: scans someone else's contact QR with Google's code scanner and opens *Add contact* pre-filled.
 - **Plan**: the concept document, bundled for offline reading.
 
+## Download a test build
+
+GitHub builds the APK on every push (`.github/workflows/build-apk.yml`):
+
+- **Latest build:** open the repo's **Actions** tab, click the newest *Build APK* run, and download **Nodd-debug-apk** under *Artifacts*. It's a zip with the APK inside.
+- **Release:** push a version tag and the APK is attached to a GitHub Release, which is easier to share:
+
+  ```
+  git tag v0.1.1
+  git push origin v0.1.1
+  ```
+
+All builds are signed with the shared test key in `keystore/`, so a new APK installs over the old one without uninstalling.
+
 ## Install on a phone
 
-Build the APK (see below), copy `app/build/outputs/apk/debug/app-debug.apk` to the phone (USB, Drive, WhatsApp to yourself), open it, and allow "Install unknown apps" for the app you opened it from. APKs aren't committed to git; share test builds through GitHub Releases instead.
+Get the APK from a GitHub build (above), or build it yourself (below) and take `app/build/outputs/apk/debug/app-debug.apk`. Copy it to the phone (USB, Drive, WhatsApp to yourself), open it, and allow "Install unknown apps" for the app you opened it from. APKs aren't committed to git; share them through GitHub Releases instead.
 
 Or with the phone plugged in and USB debugging on:
 

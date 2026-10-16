@@ -10,6 +10,17 @@ android {
     namespace = "com.cybersync.nodd"
     compileSdk = 36
 
+    signingConfigs {
+        // One shared key for test builds, so an APK from any computer or from GitHub Actions
+        // installs over the previous one. Not for the Play Store: that needs your own private upload key.
+        getByName("debug") {
+            storeFile = rootProject.file("keystore/debug.keystore")
+            storePassword = "android"
+            keyAlias = "androiddebugkey"
+            keyPassword = "android"
+        }
+    }
+
     defaultConfig {
         applicationId = "com.cybersync.nodd"
         minSdk = 26
