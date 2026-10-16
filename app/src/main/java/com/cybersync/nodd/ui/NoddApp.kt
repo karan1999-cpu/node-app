@@ -37,8 +37,8 @@ import com.cybersync.nodd.ui.screens.ScanScreen
 import com.cybersync.nodd.ui.screens.ShareScreen
 import com.cybersync.nodd.ui.vault.DecoyScreen
 import com.cybersync.nodd.ui.vault.PinScreen
+import com.cybersync.nodd.ui.vault.SecretCornerHotspot
 import com.cybersync.nodd.ui.vault.VaultHost
-import com.cybersync.nodd.ui.vault.cornerTapSequence
 
 private enum class Tab(val label: String, val icon: Int) {
     Card("My card", R.drawable.ic_card),
@@ -143,11 +143,7 @@ fun NoddApp(store: ProfileStore) {
             onLock = ::leaveVault,
         )
 
-        is Route.Home -> Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .cornerTapSequence { route = Route.Decoy },
-        ) {
+        is Route.Home -> {
             Scaffold(
                 containerColor = MaterialTheme.colorScheme.background,
                 bottomBar = {
@@ -188,6 +184,8 @@ fun NoddApp(store: ProfileStore) {
                         Tab.Scan -> ScanScreen()
                         Tab.Plan -> PlanScreen()
                     }
+                    // Five quick taps in the bottom-right corner open Ultra Go Dark.
+                    SecretCornerHotspot { route = Route.Decoy }
                 }
             }
         }

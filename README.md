@@ -15,7 +15,7 @@ An Android app that needs no server.
 A hidden place to keep images, documents, videos, links and contacts off the gallery and out of other apps.
 
 - **Open it**: long-press the "Noddy." logo on the My card screen. First time, it sets a PIN; after that, it asks for the PIN.
-- **Ultra Go Dark**: a second, independent vault with its own PIN. Reach it only by the secret gesture — tap the **top-right** corner three times, then the **bottom-left** corner twice, within five seconds. A quiet "offline" screen appears; tap it, then enter the Ultra PIN.
+- **Ultra Go Dark**: a second, independent vault with its own PIN. Reach it only by the secret gesture — tap the **bottom-right corner five times** within four seconds, on any tab of the main screen. The hotspot is invisible and scales with the screen (the bottom-right ~42% of the width and ~15% of the height, just above the navigation bar). A quiet "offline" screen appears; tap it, then enter the Ultra PIN.
 - **Where files go**: imported through the system file picker (no storage permission), copied into the app's private storage, and encrypted with AES-256-GCM. The key is derived from that vault's PIN and never stored, so nothing is readable without the PIN. Files never touch the shared gallery/MediaStore, so other apps and the gallery don't see them.
 - **Auto-lock**: both vaults lock, and any decrypted temp files are wiped, the moment the app leaves the foreground.
 
