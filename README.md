@@ -1,6 +1,8 @@
-# Nodd
+# Noddy
 
-Swap contacts by QR. Version 1 is an Android app that needs no server:
+An Android app that needs no server.
+
+## Share contacts by QR
 
 - **My card**: your name, mobile, email, work and links, saved only on the phone. Switch each detail on or off for the QR.
 - **Show my QR**: a standard vCard QR. Any phone camera, Google Lens or the iPhone camera offers *Add contact* with your details filled in; the other person taps Save.
@@ -8,11 +10,27 @@ Swap contacts by QR. Version 1 is an Android app that needs no server:
 - **Scan**: scans someone else's contact QR with Google's code scanner and opens *Add contact* pre-filled.
 - **Plan**: the concept document, bundled for offline reading.
 
+## Go Dark — the private vault
+
+A hidden place to keep images, documents, videos, links and contacts off the gallery and out of other apps.
+
+- **Open it**: long-press the "Noddy." logo on the My card screen. First time, it sets a PIN; after that, it asks for the PIN.
+- **Ultra Go Dark**: a second, independent vault with its own PIN. Reach it only by the secret gesture — tap the **top-right** corner three times, then the **bottom-left** corner twice, within five seconds. A quiet "offline" screen appears; tap it, then enter the Ultra PIN.
+- **Where files go**: imported through the system file picker (no storage permission), copied into the app's private storage, and encrypted with AES-256-GCM. The key is derived from that vault's PIN and never stored, so nothing is readable without the PIN. Files never touch the shared gallery/MediaStore, so other apps and the gallery don't see them.
+- **Auto-lock**: both vaults lock, and any decrypted temp files are wiped, the moment the app leaves the foreground.
+
+The code lives in `app/src/main/java/com/cybersync/nodd/data/vault/` (crypto + storage) and `.../ui/vault/` (screens).
+
+### What it protects, and what it doesn't
+
+- **Good against**: someone picking up your unlocked phone and browsing the gallery, a file manager, or recent apps. They won't find the files, and the Ultra vault's entrance is invisible without the gesture.
+- **The limits, honestly**: the PIN *is* the lock. A short PIN can be guessed by someone who copies the app's data off the phone and runs a cracker — use a longer PIN (up to 8 digits) if that's a concern. If you forget a PIN, that vault's contents can't be recovered. Opening a video or document hands a temporary decrypted copy to whichever app opens it (images are shown inside Noddy only). This is privacy against casual snooping, not protection against a forensic lab or a rooted/compromised phone.
+
 ## Download a test build
 
 GitHub builds the APK on every push (`.github/workflows/build-apk.yml`):
 
-- **Latest build:** open the repo's **Actions** tab, click the newest *Build APK* run, and download **Nodd-debug-apk** under *Artifacts*. It's a zip with the APK inside.
+- **Latest build:** open the repo's **Actions** tab, click the newest *Build APK* run, and download **Noddy-debug-apk** under *Artifacts*. It's a zip with the APK inside.
 - **Release:** push a version tag and the APK is attached to a GitHub Release, which is easier to share:
 
   ```

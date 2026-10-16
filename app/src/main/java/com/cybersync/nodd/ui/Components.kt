@@ -65,7 +65,7 @@ fun Wordmark(modifier: Modifier = Modifier) {
     val dot = MaterialTheme.colorScheme.primary
     Text(
         text = buildAnnotatedString {
-            append("Nodd")
+            append("Noddy")
             withStyle(SpanStyle(color = dot)) { append(".") }
         },
         style = MaterialTheme.typography.displayMedium,

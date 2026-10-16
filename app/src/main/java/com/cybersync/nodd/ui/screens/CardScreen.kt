@@ -1,6 +1,7 @@
 package com.cybersync.nodd.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,6 +31,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextOverflow
@@ -52,6 +54,7 @@ fun CardScreen(
     onShowQr: () -> Unit,
     onSendFile: () -> Unit,
     onToggle: (Field, Boolean) -> Unit,
+    onGoDark: () -> Unit,
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(20.dp),
@@ -61,7 +64,12 @@ fun CardScreen(
             .padding(horizontal = 20.dp, vertical = 16.dp),
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Wordmark(Modifier.weight(1f))
+            // Long-pressing the wordmark opens Go Dark. Nothing on screen points to it.
+            Wordmark(
+                Modifier
+                    .weight(1f)
+                    .pointerInput(Unit) { detectTapGestures(onLongPress = { onGoDark() }) }
+            )
             if (!profile.isBlank) {
                 IconButton(onClick = onEdit) {
                     Icon(painterResource(R.drawable.ic_edit), contentDescription = "Edit my details")

@@ -35,13 +35,13 @@ jobs:
           else
             label="$(git rev-parse --short HEAD)"
           fi
-          file="Nodd-${label}-debug.apk"
+          file="Noddy-${label}-debug.apk"
           cp app/build/outputs/apk/debug/app-debug.apk "$file"
           echo "file=$file" >> "$GITHUB_OUTPUT"
 
       - uses: actions/upload-artifact@v5
         with:
-          name: Nodd-debug-apk
+          name: Noddy-debug-apk
           path: ${{ steps.apk.outputs.file }}
           if-no-files-found: error
 
