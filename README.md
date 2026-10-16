@@ -15,15 +15,18 @@ An Android app that needs no server.
 A hidden place to keep images, documents, videos, links and contacts off the gallery and out of other apps.
 
 - **Open it**: long-press the "Noddy." logo on the My card screen. First time, it sets a PIN; after that, it asks for the PIN.
-- **Ultra Go Dark**: a second, independent vault with its own PIN. Reach it only by the secret gesture — tap the **bottom-right corner five times** within four seconds, on any tab of the main screen. The hotspot is invisible and scales with the screen (the bottom-right ~42% of the width and ~15% of the height, just above the navigation bar). A quiet "offline" screen appears; tap it, then enter the Ultra PIN.
-- **Where files go**: imported through the system file picker (no storage permission), copied into the app's private storage, and encrypted with AES-256-GCM. The key is derived from that vault's PIN and never stored, so nothing is readable without the PIN. Files never touch the shared gallery/MediaStore, so other apps and the gallery don't see them.
+- **Ultra Go Dark**: a second, independent vault with **no PIN**. Tap **anywhere on the main screen five times quickly** (five taps within 1.5 seconds) and it opens straight away. The taps still reach whatever is underneath, so buttons and tabs keep working; only a fast burst of five opens Ultra. Taps on the embedded web page in the Plan tab may not count, so do it from My card or Scan.
+- **Where files go**: imported through the system file picker (no storage permission), copied into the app's private storage, and encrypted with AES-256-GCM. Files never touch the shared gallery/MediaStore, so other apps and the gallery don't see them.
+  - **Go Dark**: the key is derived from its PIN and never stored, so nothing is readable without the PIN.
+  - **Ultra Go Dark**: the key lives in the Android Keystore on this phone, so the files are unreadable if copied off the device, but anyone who does the five-tap gesture in the app can see them.
 - **Auto-lock**: both vaults lock, and any decrypted temp files are wiped, the moment the app leaves the foreground.
 
 The code lives in `app/src/main/java/com/cybersync/nodd/data/vault/` (crypto + storage) and `.../ui/vault/` (screens).
 
 ### What it protects, and what it doesn't
 
-- **Good against**: someone picking up your unlocked phone and browsing the gallery, a file manager, or recent apps. They won't find the files, and the Ultra vault's entrance is invisible without the gesture.
+- **Good against**: someone picking up your unlocked phone and browsing the gallery, a file manager, or recent apps. They won't find the files, and nothing on screen shows the Ultra vault exists.
+- **Ultra is hidden, not locked**: with no PIN, the five-tap gesture is the only thing between a bystander and its contents. Fast tapping on the main screen can also open it by accident.
 - **The limits, honestly**: the PIN *is* the lock. A short PIN can be guessed by someone who copies the app's data off the phone and runs a cracker — use a longer PIN (up to 8 digits) if that's a concern. If you forget a PIN, that vault's contents can't be recovered. Opening a video or document hands a temporary decrypted copy to whichever app opens it (images are shown inside Noddy only). This is privacy against casual snooping, not protection against a forensic lab or a rooted/compromised phone.
 
 ## Download a test build

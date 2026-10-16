@@ -58,6 +58,14 @@ class VaultManager(context: Context) {
         }
     }
 
+    /** Opens Ultra Go Dark. No PIN: its key lives in the Android Keystore on this phone. */
+    fun openUltra(): Vault {
+        root.mkdirs()
+        val vault = Vault(ULTRA, VaultCrypto.getOrCreateDeviceKey(ULTRA_KEY_ALIAS))
+        if (!idx(ULTRA).exists()) saveItems(vault, emptyList())
+        return vault
+    }
+
     fun loadItems(vault: Vault): List<VaultItem> {
         val file = idx(vault.id)
         if (!file.exists()) return emptyList()
@@ -169,6 +177,7 @@ class VaultManager(context: Context) {
         val VERIFIER = "NODDY-VAULT-OK".toByteArray(Charsets.UTF_8)
         const val MAIN = "m"
         const val ULTRA = "u"
+        const val ULTRA_KEY_ALIAS = "noddy_vault_u"
     }
 
     fun mainId() = MAIN

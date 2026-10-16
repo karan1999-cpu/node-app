@@ -35,10 +35,9 @@ import com.cybersync.nodd.ui.screens.EditCardScreen
 import com.cybersync.nodd.ui.screens.PlanScreen
 import com.cybersync.nodd.ui.screens.ScanScreen
 import com.cybersync.nodd.ui.screens.ShareScreen
-import com.cybersync.nodd.ui.vault.DecoyScreen
 import com.cybersync.nodd.ui.vault.PinScreen
-import com.cybersync.nodd.ui.vault.SecretCornerHotspot
 import com.cybersync.nodd.ui.vault.VaultHost
+import com.cybersync.nodd.ui.vault.tapAnywhere
 
 private enum class Tab(val label: String, val icon: Int) {
     Card("My card", R.drawable.ic_card),
@@ -51,7 +50,6 @@ private sealed interface Route {
     data object Edit : Route
     data object Share : Route
     data class Pin(val ultra: Boolean) : Route
-    data object Decoy : Route
     data class VaultOpen(val vault: Vault, val ultra: Boolean) : Route
 }
 
@@ -130,11 +128,6 @@ fun NoddApp(store: ProfileStore) {
             )
         }
 
-        is Route.Decoy -> DecoyScreen(onContinue = {
-            pinError = null
-            route = Route.Pin(ultra = true)
-        })
-
         is Route.VaultOpen -> VaultHost(
             manager = manager,
             vault = r.vault,
@@ -143,7 +136,12 @@ fun NoddApp(store: ProfileStore) {
             onLock = ::leaveVault,
         )
 
-        is Route.Home -> {
+        // Five quick taps anywhere on the main screen open Ultra Go Dark, with no PIN.
+        is Route.Home -> Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .tapAnywhere { route = Route.VaultOpen(manager.openUltra(), ultra = true) },
+        ) {
             Scaffold(
                 containerColor = MaterialTheme.colorScheme.background,
                 bottomBar = {
@@ -184,8 +182,6 @@ fun NoddApp(store: ProfileStore) {
                         Tab.Scan -> ScanScreen()
                         Tab.Plan -> PlanScreen()
                     }
-                    // Five quick taps in the bottom-right corner open Ultra Go Dark.
-                    SecretCornerHotspot { route = Route.Decoy }
                 }
             }
         }

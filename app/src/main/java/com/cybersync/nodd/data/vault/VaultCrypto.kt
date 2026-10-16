@@ -1,11 +1,15 @@
 package com.cybersync.nodd.data.vault
 
+import android.security.keystore.KeyGenParameterSpec
+import android.security.keystore.KeyProperties
 import java.io.InputStream
 import java.io.OutputStream
+import java.security.KeyStore
 import java.security.SecureRandom
 import javax.crypto.Cipher
 import javax.crypto.CipherInputStream
 import javax.crypto.CipherOutputStream
+import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
 import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.GCMParameterSpec
@@ -32,6 +36,27 @@ object VaultCrypto {
     private val random = SecureRandom()
 
     fun newSalt(): ByteArray = ByteArray(SALT_LEN).also { random.nextBytes(it) }
+
+    /**
+     * A key kept in the Android Keystore, for a vault that opens without a PIN. The key never
+     * leaves the phone's secure hardware, so the files stay encrypted on disk and unreadable
+     * if copied off the device, but anyone who can open the vault in the app can see them.
+     */
+    fun getOrCreateDeviceKey(alias: String): SecretKey {
+        val keyStore = KeyStore.getInstance("AndroidKeyStore").apply { load(null) }
+        (keyStore.getEntry(alias, null) as? KeyStore.SecretKeyEntry)?.let { return it.secretKey }
+        val generator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, "AndroidKeyStore")
+        generator.init(
+            KeyGenParameterSpec.Builder(alias, KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT)
+                .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
+                .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
+                .setKeySize(256)
+                // We supply our own random IV for each file, the same as for the PIN vault.
+                .setRandomizedEncryptionRequired(false)
+                .build(),
+        )
+        return generator.generateKey()
+    }
 
     fun deriveKey(pin: CharArray, salt: ByteArray): SecretKey {
         val spec = PBEKeySpec(pin, salt, ITERATIONS, KEY_BITS)
