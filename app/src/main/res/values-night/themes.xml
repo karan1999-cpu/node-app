@@ -1,0 +1,6 @@
+<resources>
+    <!-- Dark parent sets isLightTheme=false, so the plan WebView switches to the page's dark colors. -->
+    <style name="Theme.Nodd" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@color/paper</item>
+    </style>
+</resources>

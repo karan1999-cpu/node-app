@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Three QR finder marks and a yellow dot: the "nod". Kept inside the 66dp safe zone. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:fillType="evenOdd"
+        android:pathData="M36,33h10a3,3 0 0 1 3,3v10a3,3 0 0 1 -3,3h-10a3,3 0 0 1 -3,-3v-10a3,3 0 0 1 3,-3z M38,36.5h6a1.5,1.5 0 0 1 1.5,1.5v6a1.5,1.5 0 0 1 -1.5,1.5h-6a1.5,1.5 0 0 1 -1.5,-1.5v-6a1.5,1.5 0 0 1 1.5,-1.5z M39.5,38.5h3a1,1 0 0 1 1,1v3a1,1 0 0 1 -1,1h-3a1,1 0 0 1 -1,-1v-3a1,1 0 0 1 1,-1z" />
+    <group android:translateX="26">
+        <path
+            android:fillColor="#FFFFFFFF"
+            android:fillType="evenOdd"
+            android:pathData="M36,33h10a3,3 0 0 1 3,3v10a3,3 0 0 1 -3,3h-10a3,3 0 0 1 -3,-3v-10a3,3 0 0 1 3,-3z M38,36.5h6a1.5,1.5 0 0 1 1.5,1.5v6a1.5,1.5 0 0 1 -1.5,1.5h-6a1.5,1.5 0 0 1 -1.5,-1.5v-6a1.5,1.5 0 0 1 1.5,-1.5z M39.5,38.5h3a1,1 0 0 1 1,1v3a1,1 0 0 1 -1,1h-3a1,1 0 0 1 -1,-1v-3a1,1 0 0 1 1,-1z" />
+    </group>
+    <group android:translateY="26">
+        <path
+            android:fillColor="#FFFFFFFF"
+            android:fillType="evenOdd"
+            android:pathData="M36,33h10a3,3 0 0 1 3,3v10a3,3 0 0 1 -3,3h-10a3,3 0 0 1 -3,-3v-10a3,3 0 0 1 3,-3z M38,36.5h6a1.5,1.5 0 0 1 1.5,1.5v6a1.5,1.5 0 0 1 -1.5,1.5h-6a1.5,1.5 0 0 1 -1.5,-1.5v-6a1.5,1.5 0 0 1 1.5,-1.5z M39.5,38.5h3a1,1 0 0 1 1,1v3a1,1 0 0 1 -1,1h-3a1,1 0 0 1 -1,-1v-3a1,1 0 0 1 1,-1z" />
+    </group>
+    <path
+        android:fillColor="#FFFFC83D"
+        android:pathData="M59,67a8,8 0 1 0 16,0a8,8 0 1 0 -16,0z" />
+</vector>

@@ -1,0 +1,898 @@
+<title>Nodd App Concept</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Figtree:wght@400..700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: one 1040px reading column, summary first then detail; phone mockups break into a wider grid (a swipeable rail on phones) */
+:root{
+  --paper:#F1F2F7; --surface:#FFFFFF; --sunk:#E6E8F2; --ink:#141833; --muted:#575D7C; --line:#D6D9E6;
+  --cobalt:#3242E6; --cobalt-ink:#FFFFFF; --cobalt-soft:#E1E4FD;
+  --sun:#FFC83D; --sun-soft:#FFF3CC; --sun-ink:#4A3500;
+  --good:#0E7F57; --good-soft:#DCF2E8; --bad:#B42E2B; --bad-soft:#FBE2E1; --mid:#8A5A00; --mid-soft:#FCEFD3;
+  --frame:#171A2E; --qr-bg:#FFFFFF; --qr-fg:#10132B; --pick-bg:#141833; --pick-fg:#F1F2F7;
+  --display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  --body:"Figtree","Segoe UI",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0C0F1E; --surface:#151931; --sunk:#1C2140; --ink:#E8EAF6; --muted:#9DA3C3; --line:#2A3053;
+    --cobalt:#8491FF; --cobalt-ink:#0C0F1E; --cobalt-soft:#212A5E;
+    --sun:#FFD25A; --sun-soft:#3A3013; --sun-ink:#FFE7A3;
+    --good:#58CD9E; --good-soft:#123527; --bad:#FF8A82; --bad-soft:#3F1A1C; --mid:#F3B54A; --mid-soft:#3A2C12;
+    --frame:#03040B; --qr-bg:#FFFFFF; --qr-fg:#10132B; --pick-bg:#212A5E; --pick-fg:#E8EAF6;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0C0F1E; --surface:#151931; --sunk:#1C2140; --ink:#E8EAF6; --muted:#9DA3C3; --line:#2A3053;
+  --cobalt:#8491FF; --cobalt-ink:#0C0F1E; --cobalt-soft:#212A5E;
+  --sun:#FFD25A; --sun-soft:#3A3013; --sun-ink:#FFE7A3;
+  --good:#58CD9E; --good-soft:#123527; --bad:#FF8A82; --bad-soft:#3F1A1C; --mid:#F3B54A; --mid-soft:#3A2C12;
+  --frame:#03040B; --qr-bg:#FFFFFF; --qr-fg:#10132B; --pick-bg:#212A5E; --pick-fg:#E8EAF6;
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font:400 16px/1.6 var(--body);-webkit-font-smoothing:antialiased}
+.wrap{max-width:1040px;margin:0 auto;padding-inline:20px;padding-block:36px 96px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.1}
+h2{font-size:clamp(1.6rem,3.4vw,2.25rem);font-weight:720;letter-spacing:-.015em}
+h3{font-size:1.08rem;font-weight:680;letter-spacing:-.005em}
+p{margin:0;max-width:66ch}
+a{color:var(--cobalt);text-underline-offset:3px}
+a:focus-visible,button:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px;border-radius:4px}
+.eyebrow{font:600 .72rem/1.2 var(--mono);letter-spacing:.09em;text-transform:uppercase;color:var(--cobalt)}
+.muted{color:var(--muted)}
+section{padding-top:80px;display:flex;flex-direction:column;gap:22px}
+.lede{font-size:1.08rem;color:var(--muted)}
+.ico{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+
+/* ---------- hero ---------- */
+.hero{display:grid;grid-template-columns:1fr auto;gap:40px;align-items:center}
+.hero-text{display:flex;flex-direction:column;gap:18px;min-width:0}
+.wordmark{font-size:clamp(4.5rem,13vw,8.5rem);font-weight:800;letter-spacing:-.05em;line-height:.85;font-variation-settings:"opsz" 96}
+.wordmark .dot{color:var(--cobalt)}
+.tagline{font-family:var(--display);font-size:clamp(1.3rem,2.8vw,1.75rem);font-weight:560;line-height:1.25;max-width:24ch;letter-spacing:-.01em}
+.masked{display:inline-flex;align-items:center;gap:12px;align-self:flex-start;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:8px 10px 8px 18px;font:600 1.05rem/1 var(--mono);flex-wrap:wrap}
+.masked .num{display:inline-flex;gap:.4ch}
+.masked .hid{filter:blur(5px);user-select:none}
+.masked .lockpill{display:inline-flex;align-items:center;gap:6px;background:var(--sun);color:#3A2A00;border-radius:999px;padding:6px 10px;font:600 .72rem/1 var(--mono);letter-spacing:.06em;text-transform:uppercase}
+.promises{display:flex;flex-wrap:wrap;gap:10px 28px;padding-top:6px}
+.promise{display:flex;align-items:baseline;gap:8px}
+.promise b{font:700 1.4rem/1 var(--display);color:var(--ink)}
+.promise span{color:var(--muted);font-size:.92rem}
+
+/* ---------- summary ---------- */
+.summary{margin-top:56px;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:8px 28px}
+.summary .row{display:grid;grid-template-columns:220px 1fr;gap:20px;padding:18px 0;border-bottom:1px solid var(--line)}
+.summary .row:last-child{border-bottom:0}
+.summary dt{font:600 .78rem/1.4 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding-top:3px}
+.summary dd{margin:0;min-width:0}
+.summary dd strong{font-weight:700}
+.verdict{display:inline-flex;align-items:center;gap:8px;background:var(--sun-soft);color:var(--sun-ink);border-radius:8px;padding:2px 10px;font-weight:700}
+
+.toc{display:flex;flex-wrap:wrap;gap:8px;margin-top:28px}
+.toc a{text-decoration:none;color:var(--ink);background:var(--sunk);border-radius:999px;padding:6px 14px;font-size:.88rem;font-weight:550}
+.toc a:hover{background:var(--cobalt-soft);color:var(--cobalt)}
+
+/* ---------- tables & pills ---------- */
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:16px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:760px;font-size:.92rem}
+th,td{text-align:left;padding:13px 16px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font:600 .7rem/1.3 var(--mono);letter-spacing:.07em;text-transform:uppercase;color:var(--muted);background:var(--sunk)}
+tr:last-child td{border-bottom:0}
+td.name{font-weight:700;white-space:nowrap}
+td.name small{display:block;font-weight:400;color:var(--muted);font-size:.8rem;white-space:normal}
+tr.ours td{background:var(--cobalt-soft)}
+tr.ours td.name{color:var(--cobalt)}
+.pill{display:inline-block;border-radius:6px;padding:2px 8px;font-size:.8rem;font-weight:650;white-space:nowrap}
+.pill.good{background:var(--good-soft);color:var(--good)}
+.pill.bad{background:var(--bad-soft);color:var(--bad)}
+.pill.mid{background:var(--mid-soft);color:var(--mid)}
+.num-cell{font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+
+.takeaway{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.takeaway > div{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px 22px;display:flex;flex-direction:column;gap:8px}
+.takeaway .k{font:600 .72rem/1.2 var(--mono);letter-spacing:.08em;text-transform:uppercase}
+.takeaway .k.solved{color:var(--muted)}
+.takeaway .k.gap{color:var(--cobalt)}
+
+/* ---------- use cases ---------- */
+.uses{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:18px;overflow:hidden}
+.use{background:var(--surface);padding:22px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.use .where{font:600 .7rem/1.2 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.use p{font-size:.94rem;color:var(--muted)}
+.use.hero-use{background:var(--cobalt);color:var(--cobalt-ink)}
+.use.hero-use .where,.use.hero-use p{color:var(--cobalt-ink);opacity:.85}
+
+/* ---------- flow ---------- */
+.flow{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;counter-reset:step}
+.flow li{counter-increment:step;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:6px;font-size:.9rem;min-width:0}
+.flow li::before{content:counter(step);font:700 1.5rem/1 var(--display);color:var(--cobalt)}
+.flow li b{font-size:.95rem}
+.flow li span{color:var(--muted)}
+.flow.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+#how h3{padding-top:6px}
+
+/* ---------- phone mockups ---------- */
+.shots{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:44px 24px;justify-items:center;padding-top:8px}
+.shot{width:250px;display:flex;flex-direction:column;gap:14px}
+.shot figcaption{display:flex;flex-direction:column;gap:3px;font-size:.88rem;color:var(--muted)}
+.shot figcaption b{color:var(--ink);font-family:var(--display);font-size:1rem;font-weight:680}
+.shot{margin:0}
+.phone{width:250px;height:516px;border-radius:38px;background:var(--frame);padding:9px;box-shadow:0 1px 0 rgba(255,255,255,.06) inset,0 24px 48px -24px rgba(16,19,43,.45)}
+.screen{position:relative;height:100%;border-radius:30px;background:var(--paper);overflow:hidden;display:flex;flex-direction:column;font-family:var(--body);color:var(--ink);font-size:12px;line-height:1.4}
+.screen::before{content:"";position:absolute;top:8px;left:50%;transform:translateX(-50%);width:70px;height:18px;border-radius:12px;background:var(--frame);z-index:2}
+.sb{display:flex;justify-content:space-between;padding:10px 20px 4px;font:600 10px/1 var(--mono);color:var(--ink)}
+.pad{padding:8px 14px;display:flex;flex-direction:column;gap:10px;flex:1;min-height:0}
+.app-h{display:flex;align-items:center;justify-content:space-between;padding-top:10px}
+.logo{font:800 18px/1 var(--display);letter-spacing:-.04em}
+.logo i{font-style:normal;color:var(--cobalt)}
+.av{width:28px;height:28px;border-radius:50%;background:var(--cobalt-soft);color:var(--cobalt);display:grid;place-items:center;font:700 10px/1 var(--display);flex:none}
+.av.lg{width:42px;height:42px;font-size:14px}
+.av.sun{background:var(--sun);color:#3A2A00}
+.chips{display:flex;gap:6px}
+.chip{border-radius:999px;padding:4px 10px;font-size:10.5px;font-weight:600;background:var(--sunk);color:var(--muted)}
+.chip.on{background:var(--ink);color:var(--paper)}
+.ccard{background:var(--cobalt);color:var(--cobalt-ink);border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.ccard .who{display:flex;align-items:center;gap:10px}
+.ccard .who .av{background:var(--cobalt-ink);color:var(--cobalt)}
+.ccard .nm{font:700 14px/1.1 var(--display)}
+.ccard .rl{font-size:10.5px;opacity:.85}
+.fields{display:flex;flex-direction:column;background:var(--surface);border-radius:14px;border:1px solid var(--line)}
+.f{display:flex;align-items:center;gap:8px;padding:8px 10px;border-bottom:1px solid var(--line);min-width:0}
+.f:last-child{border-bottom:0}
+.f .lbl{flex:1;min-width:0;display:flex;flex-direction:column}
+.f .lbl small{font-size:9.5px;color:var(--muted)}
+.f .lbl span{font-size:11px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.f.hidden .lbl span{color:var(--muted)}
+.tg{width:26px;height:15px;border-radius:999px;background:var(--line);position:relative;flex:none}
+.tg::after{content:"";position:absolute;top:2px;left:2px;width:11px;height:11px;border-radius:50%;background:var(--surface);box-shadow:0 1px 2px rgba(0,0,0,.2)}
+.tg.on{background:var(--cobalt)}
+.tg.on::after{left:13px}
+.btn{display:flex;align-items:center;justify-content:center;gap:6px;border-radius:14px;padding:11px;font:700 12.5px/1 var(--body);background:var(--cobalt);color:var(--cobalt-ink)}
+.btn.ghost{background:var(--surface);color:var(--ink);border:1px solid var(--line)}
+.tiny{font-size:9.5px;color:var(--muted);text-align:center}
+.spacer{flex:1}
+
+.qrbox{background:var(--qr-bg);border-radius:20px;padding:12px;align-self:center;width:176px}
+.qr{display:block;width:100%;height:auto}
+.timer{display:flex;align-items:center;justify-content:center;gap:6px;font:600 10.5px/1 var(--mono);color:var(--muted)}
+.methods{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.m{display:flex;flex-direction:column;align-items:center;gap:5px;padding:8px 0;border-radius:12px;background:var(--surface);border:1px solid var(--line);font-size:9.5px;font-weight:600;color:var(--muted)}
+.m.on{border-color:var(--cobalt);color:var(--cobalt)}
+.m .ico{width:16px;height:16px}
+
+.done{width:48px;height:48px;border-radius:50%;background:var(--good-soft);color:var(--good);display:grid;place-items:center;align-self:center;margin-top:6px}
+.done .ico{width:24px;height:24px;stroke-width:2.6}
+.ctr{text-align:center;display:flex;flex-direction:column;gap:3px}
+.ctr b{font:700 15px/1.2 var(--display)}
+.metnote{background:var(--surface);border:1px dashed var(--line);border-radius:12px;padding:8px 10px;display:flex;gap:8px;align-items:flex-start;font-size:10.5px}
+.metnote small{display:block;color:var(--muted);font-size:9.5px}
+.shield{display:flex;align-items:center;gap:7px;background:var(--sun-soft);color:var(--sun-ink);border-radius:10px;padding:7px 10px;font-size:10px;font-weight:600}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+
+.chat-h{display:flex;align-items:center;gap:8px;padding:12px 12px 8px;border-bottom:1px solid var(--line);background:var(--surface)}
+.chat-h .t{flex:1;min-width:0}
+.chat-h .t b{display:block;font-size:12.5px}
+.chat-h .t small{color:var(--muted);font-size:9.5px}
+.msgs{flex:1;padding:10px 12px;display:flex;flex-direction:column;gap:6px;min-height:0;overflow:hidden}
+.bub{max-width:78%;padding:7px 10px;border-radius:14px;font-size:11px}
+.bub.them{background:var(--surface);border:1px solid var(--line);border-bottom-left-radius:4px;align-self:flex-start}
+.bub.me{background:var(--cobalt);color:var(--cobalt-ink);border-bottom-right-radius:4px;align-self:flex-end}
+.sys{align-self:center;font-size:9.5px;color:var(--muted);background:var(--sunk);border-radius:999px;padding:3px 9px}
+.compose{display:flex;gap:6px;align-items:center;padding:8px 10px 14px;border-top:1px solid var(--line);background:var(--surface)}
+.compose .in{flex:1;background:var(--sunk);border-radius:999px;padding:7px 12px;color:var(--muted);font-size:11px}
+.compose .snd{width:30px;height:30px;border-radius:50%;background:var(--cobalt);color:var(--cobalt-ink);display:grid;place-items:center}
+.compose .rv{font-size:9.5px;font-weight:700;color:var(--cobalt);border:1px solid var(--cobalt);border-radius:999px;padding:5px 8px;white-space:nowrap}
+
+.srch{display:flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:7px 10px;color:var(--muted);font-size:11px}
+.seg{display:flex;background:var(--sunk);border-radius:10px;padding:3px}
+.seg span{flex:1;text-align:center;padding:5px 0;border-radius:8px;font-size:10.5px;font-weight:600;color:var(--muted)}
+.seg span.on{background:var(--surface);color:var(--ink)}
+.plist{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.pr{display:flex;align-items:center;gap:8px;padding:9px 10px;border-bottom:1px solid var(--line);position:relative;min-width:0}
+.pr:last-child{border-bottom:0}
+.pr .lbl{flex:1;min-width:0}
+.pr .lbl b{display:block;font-size:11.5px}
+.pr .lbl small{display:block;color:var(--muted);font-size:9.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tag{font-size:9px;font-weight:700;border-radius:6px;padding:2px 6px;white-space:nowrap}
+.tag.left{background:var(--mid-soft);color:var(--mid)}
+.tag.saved{background:var(--good-soft);color:var(--good)}
+.tag.exp{background:var(--sunk);color:var(--muted)}
+.pr.swiped{padding-right:0;overflow:hidden}
+.pr.swiped .slide{display:flex;align-items:center;gap:8px;flex:1;min-width:0;transform:translateX(-62px);margin-right:-62px}
+.revoke{width:62px;align-self:stretch;margin:-9px 0;background:var(--bad);color:var(--paper);display:grid;place-items:center;font-size:10px;font-weight:700;flex:none}
+
+.browser{background:var(--sunk);padding:12px 12px 8px;display:flex;flex-direction:column;gap:6px}
+.urlbar{background:var(--surface);border-radius:999px;padding:6px 12px;font:500 10px/1 var(--mono);color:var(--muted);display:flex;align-items:center;gap:6px}
+.webcard{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.webcard .who{display:flex;gap:10px;align-items:center}
+.webcard .who b{display:block;font:700 14px/1.1 var(--display)}
+.webcard .who small{color:var(--muted);font-size:10px}
+.lnk{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:600;padding:6px 0;border-bottom:1px solid var(--line)}
+.lnk:last-child{border-bottom:0}
+
+/* ---------- features ---------- */
+.cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.col{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:22px 24px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.col.v1{border-color:var(--cobalt)}
+.col h3{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.col h3 .pill{font-family:var(--body)}
+.col ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:9px}
+.col li{display:grid;grid-template-columns:16px 1fr;gap:10px;font-size:.94rem}
+.col li::before{content:"";width:7px;height:7px;border-radius:2px;background:var(--cobalt);margin-top:.55em;justify-self:center}
+.col.v2 li::before{background:var(--line)}
+.col li span{color:var(--muted)}
+
+/* ---------- steps ---------- */
+.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;counter-reset:s;border:1px solid var(--line);border-radius:18px;background:var(--surface);overflow:hidden}
+.steps li{counter-increment:s;display:grid;grid-template-columns:48px 1fr;gap:14px;padding:18px 22px;border-bottom:1px solid var(--line)}
+.steps li:last-child{border-bottom:0}
+.steps li::before{content:counter(s,decimal-leading-zero);font:600 .9rem/1.6 var(--mono);color:var(--cobalt)}
+.steps li > div{display:flex;flex-direction:column;gap:4px;min-width:0}
+.steps li p{color:var(--muted);font-size:.94rem}
+.policy{background:var(--sunk);border-radius:18px;padding:22px 24px;display:flex;flex-direction:column;gap:12px}
+.policy ul{margin:0;padding-left:1.1em;display:flex;flex-direction:column;gap:8px;font-size:.94rem}
+.policy li b{font-weight:700}
+
+/* ---------- cost ---------- */
+.cost table{min-width:680px}
+.cost td.num-cell,.cost th.r{text-align:right}
+.cost tr.total td{font-weight:700;background:var(--sunk);border-top:2px solid var(--ink)}
+.notes{font-size:.88rem;color:var(--muted);display:flex;flex-direction:column;gap:6px}
+
+/* ---------- timeline ---------- */
+.gantt{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:18px 22px;display:flex;flex-direction:column;gap:12px}
+.g-row{display:grid;grid-template-columns:230px 1fr;gap:16px;align-items:center}
+.g-label{font-size:.9rem;font-weight:600;min-width:0}
+.g-label small{display:block;font-weight:400;color:var(--muted);font-size:.8rem}
+.g-track{display:grid;grid-template-columns:repeat(12,1fr);height:22px;background:repeating-linear-gradient(90deg,var(--sunk) 0 calc(100%/12 - 3px),transparent calc(100%/12 - 3px) calc(100%/12));border-radius:6px}
+.g-bar{grid-column:var(--s)/var(--e);background:var(--cobalt);border-radius:6px;margin-right:3px}
+.g-bar.soft{background:var(--cobalt-soft);border:1px dashed var(--cobalt)}
+.g-bar.sun{background:var(--sun)}
+.g-head .g-track{background:none;height:auto}
+.g-head .g-track span{font:600 .68rem/1 var(--mono);color:var(--muted);text-align:center}
+
+/* ---------- risks ---------- */
+.risks td:first-child{font-weight:700;width:26%}
+.risks td:nth-child(2){color:var(--muted);width:30%}
+
+/* ---------- names ---------- */
+.names{display:grid;grid-template-columns:1.3fr 1fr;gap:16px}
+.pick{background:var(--pick-bg);color:var(--pick-fg);border-radius:22px;padding:28px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.pick .eyebrow{color:var(--sun)}
+.pick .big{font:800 4rem/.9 var(--display);letter-spacing:-.05em}
+.pick .big i{font-style:normal;color:var(--sun)}
+.pick p{opacity:.85;font-size:.96rem}
+.pick .tl{font:600 1.15rem/1.3 var(--display);opacity:1}
+.alts{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:22px;background:var(--surface);overflow:hidden}
+.alt{padding:16px 20px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:3px}
+.alt:last-child{border-bottom:0}
+.alt b{font:700 1.15rem/1.2 var(--display)}
+.alt span{font-size:.88rem;color:var(--muted)}
+.check{display:flex;flex-wrap:wrap;gap:8px}
+.check span{font-size:.82rem;background:var(--sunk);border-radius:999px;padding:4px 12px}
+
+/* ---------- decision ---------- */
+.decide{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.decide > div{border-radius:18px;padding:24px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.decide .must{background:var(--surface);border:1px solid var(--line)}
+.decide .rec{background:var(--sun-soft);color:var(--sun-ink)}
+.decide .rec h3{color:var(--sun-ink)}
+.decide ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px}
+.decide .must li{display:grid;grid-template-columns:18px 1fr;gap:10px;font-size:.94rem}
+.decide .must li::before{content:"";width:14px;height:14px;border:2px solid var(--cobalt);border-radius:4px;margin-top:.25em}
+.decide .rec p{max-width:none}
+
+.sources{font-size:.85rem;color:var(--muted)}
+.sources ul{margin:8px 0 0;padding-left:1.1em;display:flex;flex-direction:column;gap:4px}
+.foot{margin-top:56px;padding-top:20px;border-top:1px solid var(--line);font-size:.82rem;color:var(--muted)}
+
+/* ---------- responsive ---------- */
+@media (max-width:860px){
+  .hero{grid-template-columns:1fr}
+  .hero-phone{display:none}
+  .uses{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .flow{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .names,.decide,.cols,.takeaway{grid-template-columns:1fr}
+}
+@media (max-width:640px){
+  .summary{padding:4px 18px}
+  .summary .row{grid-template-columns:1fr;gap:4px}
+  .uses,.flow,.flow.three{grid-template-columns:1fr}
+  .shots{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:20px;justify-items:initial;padding-bottom:12px;margin-inline:-20px;padding-inline:20px}
+  .shot{flex:0 0 250px;scroll-snap-align:center}
+  .g-row{grid-template-columns:1fr;gap:6px}
+  .g-head .g-label{display:none}
+  .steps li{grid-template-columns:1fr;gap:4px;padding:16px 18px}
+}
+@media (prefers-reduced-motion:no-preference){
+  .toc a{transition:background .15s,color .15s}
+}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></symbol>
+    <symbol id="i-insta" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><path d="M17.5 6.5h.01"/></symbol>
+    <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></symbol>
+    <symbol id="i-in" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 10v7M8 7v.01M12 17v-4a2 2 0 0 1 4 0v4M12 10v7"/></symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></symbol>
+    <symbol id="i-qr" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h.01M17 20h4v-3"/></symbol>
+    <symbol id="i-near" viewBox="0 0 24 24"><circle cx="12" cy="12" r="2"/><path d="M7.8 7.8a6 6 0 0 0 0 8.4M16.2 7.8a6 6 0 0 1 0 8.4M4.9 4.9a10 10 0 0 0 0 14.2M19.1 4.9a10 10 0 0 1 0 14.2"/></symbol>
+    <symbol id="i-tap" viewBox="0 0 24 24"><path d="M5 9a5 5 0 0 1 0 6M8.5 6.5a9 9 0 0 1 0 11M12 4a13 13 0 0 1 0 16"/><rect x="15" y="5" width="6" height="14" rx="1.5"/></symbol>
+    <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7"/></symbol>
+    <symbol id="i-back" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><path d="M4 12 20 4l-6 16-3-7z"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="m20 20-4.5-4.5"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-6-5.5-6-11a6 6 0 0 1 12 0c0 5.5-6 11-6 11z"/><circle cx="12" cy="10" r="2"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="i-save" viewBox="0 0 24 24"><circle cx="10" cy="8" r="4"/><path d="M3 20a7 7 0 0 1 14 0M19 8v6M16 11h6"/></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></symbol>
+  </defs>
+</svg>
+
+<div class="wrap">
+
+  <!-- ================= HERO ================= -->
+  <header class="hero">
+    <div class="hero-text">
+      <p class="eyebrow">App concept · Android first · October 2026</p>
+      <h1 class="wordmark">Nodd<span class="dot">.</span></h1>
+      <p class="tagline">Swap contacts with a stranger in five seconds. Your number stays in your pocket.</p>
+      <div class="masked" aria-label="Phone number hidden">
+        <span class="num"><span>+91</span><span>98</span><span class="hid">765</span><span class="hid">432</span><span>10</span></span>
+        <span class="lockpill"><svg class="ico" style="width:11px;height:11px"><use href="#i-lock"/></svg>Never shared</span>
+      </div>
+      <div class="promises">
+        <div class="promise"><b>5 sec</b><span>to connect</span></div>
+        <div class="promise"><b>0</b><span>phone numbers exchanged</span></div>
+        <div class="promise"><b>Any time</b><span>take the connection back</span></div>
+      </div>
+    </div>
+    <div class="hero-phone" aria-hidden="true">
+      <div class="phone">
+        <div class="screen">
+          <div class="sb"><span>4:12</span><span>5G ▮▮▮</span></div>
+          <div class="pad">
+            <div class="app-h"><span style="font-weight:700;font-size:13px">Quick card</span><svg class="ico" style="width:16px;height:16px"><use href="#i-x"/></svg></div>
+            <div class="qrbox" style="margin-top:14px"><svg class="qr" data-seed="11" viewBox="0 0 29 29" role="img" aria-label="Sample QR code"></svg></div>
+            <p class="ctr" style="max-width:none"><b>Hold up for them to scan</b><span class="muted" style="font-size:10.5px">Their camera is enough. No app needed.</span></p>
+            <div class="timer"><svg class="ico" style="width:12px;height:12px"><use href="#i-clock"/></svg><span>New code in <span class="cd">0:42</span></span></div>
+            <div class="spacer"></div>
+            <div class="methods">
+              <div class="m on"><svg class="ico"><use href="#i-qr"/></svg>QR</div>
+              <div class="m"><svg class="ico"><use href="#i-near"/></svg>Nearby</div>
+              <div class="m"><svg class="ico"><use href="#i-tap"/></svg>Tap</div>
+              <div class="m"><svg class="ico"><use href="#i-link"/></svg>Link</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= SUMMARY ================= -->
+  <dl class="summary">
+    <div class="row">
+      <dt>The idea</dt>
+      <dd>Two strangers swap contact details from their phones in seconds. Neither sees the other's phone number. They talk through the app and can share the number later, or cut the connection whenever they want.</dd>
+    </div>
+    <div class="row">
+      <dt>Version 1, built</dt>
+      <dd>An Android app you can install today. Your QR holds a standard contact card, so anyone who scans it with their phone camera gets <strong>Add contact</strong> with your name and number filled in, and just taps Save. It needs no server or hosting. The number-free chat and web card move to version 2.</dd>
+    </div>
+    <div class="row">
+      <dt>Does it exist?</dt>
+      <dd><strong>Fast sharing, yes.</strong> Apple has NameDrop (iPhone to iPhone) and Google launched Tap to Share in August 2026 (Android to Android, some phones only). Business-card apps like Blinq, HiHello and Popl also exist. <strong>Number-free, take-it-back sharing that works between any two phones, no.</strong> That gap is where Nodd fits.</dd>
+    </div>
+    <div class="row">
+      <dt>Play Store cost</dt>
+      <dd><strong>US$25 one-time</strong> (about ₹2,200) for the developer account. If you build it yourselves, the first year costs roughly <strong>₹4,000 to ₹30,000</strong> in cash. Hiring a freelancer takes it to about ₹1.6 to 4.4 lakh.</dd>
+    </div>
+    <div class="row">
+      <dt>Time to launch</dt>
+      <dd>About <strong>12 weeks</strong>, including the 14-day closed test Google requires from new personal developer accounts.</dd>
+    </div>
+    <div class="row">
+      <dt>Recommendation</dt>
+      <dd><span class="verdict">Conditional go</span> In the long run, build it as a privacy app, because Google and Apple now give fast swapping away for free. Version 1 shares your number directly, so you can test it at real events now without hosting. Add the private features once people are using it.</dd>
+    </div>
+  </dl>
+
+  <nav class="toc" aria-label="Sections">
+    <a href="#exists">What exists</a>
+    <a href="#uses">Who it's for</a>
+    <a href="#how">How it works</a>
+    <a href="#ui">The UI</a>
+    <a href="#features">Features</a>
+    <a href="#tech">Tech stack</a>
+    <a href="#playstore">Google Play</a>
+    <a href="#cost">Cost</a>
+    <a href="#timeline">Timeline</a>
+    <a href="#risks">Risks</a>
+    <a href="#name">Name</a>
+    <a href="#decision">Decision</a>
+  </nav>
+
+  <!-- ================= EXISTS ================= -->
+  <section id="exists">
+    <p class="eyebrow">Competition</p>
+    <h2>What already exists</h2>
+    <p class="lede">Quick exchange is a solved problem. Keeping your number private while staying reachable is not.</p>
+    <div class="tbl">
+      <table>
+        <thead>
+          <tr><th>Option</th><th>Works between</th><th>Gives away your number?</th><th>Can you take it back?</th><th>Other person needs</th><th>Price</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="name">Apple NameDrop<small>Built into iOS 17+</small></td><td>iPhone ↔ iPhone only</td><td><span class="pill bad">Yes</span> you pick which one</td><td><span class="pill bad">No</span></td><td>An iPhone</td><td>Free</td></tr>
+          <tr><td class="name">Google Tap to Share<small>Quick Share, launched Aug 2026</small></td><td>Android ↔ Android. Pixel 6 and later plus a few Samsung models so far</td><td><span class="pill mid">You pick fields</span></td><td><span class="pill bad">No</span></td><td>A supported Android phone</td><td>Free</td></tr>
+          <tr><td class="name">Blinq, HiHello, Popl, Wave<small>Digital business cards</small></td><td>Any phone, via QR or link</td><td><span class="pill mid">Only if you add it</span></td><td><span class="pill bad">No</span> once saved, it's theirs</td><td>Just a browser</td><td>Free tier, paid about $6–10/month</td></tr>
+          <tr><td class="name">WhatsApp QR</td><td>Anyone on WhatsApp</td><td><span class="pill bad">Yes</span></td><td><span class="pill mid">Block only</span></td><td>WhatsApp</td><td>Free</td></tr>
+          <tr><td class="name">Instagram, Snapchat, Telegram handle</td><td>Same app only</td><td><span class="pill good">No</span></td><td><span class="pill mid">Unfollow or block</span></td><td>The same app</td><td>Free</td></tr>
+          <tr><td class="name">Burner, Cloaked, Google Voice<small>Second or masked numbers</small></td><td>Calls and SMS</td><td><span class="pill mid">A second number</span></td><td><span class="pill good">Yes</span> discard it</td><td>Nothing</td><td>Paid, mostly US-only</td></tr>
+          <tr class="ours"><td class="name">Nodd<small>This proposal</small></td><td>Any phone, any platform</td><td><span class="pill good">Never</span> unless you choose to</td><td><span class="pill good">Yes</span> revoke any time</td><td>Just a browser</td><td>Free core</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="takeaway">
+      <div>
+        <span class="k solved">Already solved, for free</span>
+        <p>Phones exchanging contact cards quickly. NameDrop and Tap to Share are built into the phone, so "faster sharing" alone will not make anyone install another app.</p>
+      </div>
+      <div>
+        <span class="k gap">The open gap</span>
+        <p>Meeting someone you are not ready to trust yet. You want to stay reachable without handing over a number that leads to spam, unwanted calls, or your WhatsApp profile, and you want to be able to undo it later.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= USES ================= -->
+  <section id="uses">
+    <p class="eyebrow">Perfect use</p>
+    <h2>Who it's for</h2>
+    <p class="lede">The best moment for Nodd is when someone says "give me your number" and you would rather not.</p>
+    <div class="uses">
+      <div class="use hero-use">
+        <span class="where">The core moment</span>
+        <h3>Strangers who just met</h3>
+        <p>A conversation at a café, gym, trek or train. You want to keep talking, but your number is too personal for someone you met an hour ago.</p>
+      </div>
+      <div class="use">
+        <span class="where">College fests, hackathons, meetups</span>
+        <h3>Events</h3>
+        <p>Dozens of new people in one day. Each one scans you, and later you can see who you met, where, and when.</p>
+      </div>
+      <div class="use">
+        <span class="where">OLX, Marketplace, flat hunting</span>
+        <h3>One-time deals</h3>
+        <p>Talk to a buyer or seller without giving them a number they keep forever. The connection expires after the deal.</p>
+      </div>
+      <div class="use">
+        <span class="where">Safety first</span>
+        <h3>Women meeting new people</h3>
+        <p>Stay in control. Share an Instagram or a chat, never the number, and cut contact with one tap if things go wrong.</p>
+      </div>
+      <div class="use">
+        <span class="where">Hostels, tours, flights</span>
+        <h3>Travel friends</h3>
+        <p>Swap details with people from other countries, whatever phone they carry and whichever chat app they use.</p>
+      </div>
+      <div class="use">
+        <span class="where">Creators, freelancers</span>
+        <h3>Networking without a business card</h3>
+        <p>One code that shows your portfolio, Instagram and email. Your number goes only to the clients you choose.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= HOW ================= -->
+  <section id="how">
+    <p class="eyebrow">The flow</p>
+    <h2>How it works</h2>
+    <h3>Version 1, in the app now</h3>
+    <ol class="flow three">
+      <li><b>Show</b><span>Tap "Show my QR". The screen jumps to full brightness so it scans fast.</span></li>
+      <li><b>Scan</b><span>They point their phone camera or Google Lens at it. No app needed, iPhone included.</span></li>
+      <li><b>Save</b><span>Their phone opens Add contact with your details filled in. They tap Save.</span></li>
+    </ol>
+    <h3>Version 2, once there is hosting</h3>
+    <ol class="flow">
+      <li><b>Open</b><span>One tap on the home-screen widget shows your card's QR code.</span></li>
+      <li><b>Scan</b><span>They point their camera at it. With no app, a web card opens. With the app, you connect at once.</span></li>
+      <li><b>Connected</b><span>Each person sees only what the other chose to share. Phone numbers stay hidden.</span></li>
+      <li><b>Talk</b><span>Chat through Nodd. The first message arrives as a request, so nobody can spam you.</span></li>
+      <li><b>Decide later</b><span>Share your number, keep it forever, let it expire, or revoke it. Revoking closes the chat for both.</span></li>
+    </ol>
+  </section>
+
+  <!-- ================= UI ================= -->
+  <section id="ui">
+    <p class="eyebrow">Screens</p>
+    <h2>The UI</h2>
+    <p class="lede">Six key screens of the full version. The design rule: the number is always visibly locked, and every action that reveals more is a deliberate tap. Version 1 ships the card and QR screens. The web card, chat and People list come with version 2.</p>
+
+    <div class="shots">
+
+      <!-- 1. Home / my cards -->
+      <figure class="shot">
+        <div class="phone"><div class="screen">
+          <div class="sb"><span>9:41</span><span>5G ▮▮▮</span></div>
+          <div class="pad">
+            <div class="app-h"><span class="logo">Nodd<i>.</i></span><span class="av">AM</span></div>
+            <div class="chips"><span class="chip on">Quick</span><span class="chip">Social</span><span class="chip">Work</span></div>
+            <div class="ccard">
+              <div class="who"><span class="av lg">AM</span><div><div class="nm">Aarav Mehta</div><div class="rl">Product designer · Pune</div></div></div>
+            </div>
+            <div class="fields">
+              <div class="f"><svg class="ico"><use href="#i-insta"/></svg><div class="lbl"><small>Instagram</small><span>@aarav.makes</span></div><span class="tg on"></span></div>
+              <div class="f"><svg class="ico"><use href="#i-in"/></svg><div class="lbl"><small>LinkedIn</small><span>in/aaravmehta</span></div><span class="tg on"></span></div>
+              <div class="f"><svg class="ico"><use href="#i-mail"/></svg><div class="lbl"><small>Email</small><span>aarav@example.com</span></div><span class="tg"></span></div>
+              <div class="f hidden"><svg class="ico"><use href="#i-lock"/></svg><div class="lbl"><small>Phone</small><span>Hidden on this card</span></div><span class="tg"></span></div>
+            </div>
+            <div class="spacer"></div>
+            <div class="btn"><svg class="ico"><use href="#i-qr"/></svg>Share Quick card</div>
+            <p class="tiny" style="max-width:none">New connections expire in 7 days · Change</p>
+          </div>
+        </div></div>
+        <figcaption><b>Your cards</b>Up to three cards. Each one chooses what to show. Phone is off by default.</figcaption>
+      </figure>
+
+      <!-- 2. Share -->
+      <figure class="shot">
+        <div class="phone"><div class="screen">
+          <div class="sb"><span>4:12</span><span>5G ▮▮▮</span></div>
+          <div class="pad">
+            <div class="app-h"><span style="font-weight:700;font-size:13px">Quick card</span><svg class="ico" style="width:16px;height:16px"><use href="#i-x"/></svg></div>
+            <div class="qrbox" style="margin-top:14px"><svg class="qr" data-seed="23" viewBox="0 0 29 29" role="img" aria-label="Sample QR code"></svg></div>
+            <p class="ctr" style="max-width:none"><b>Hold up for them to scan</b><span class="muted" style="font-size:10.5px">Their camera is enough. No app needed.</span></p>
+            <div class="timer"><svg class="ico" style="width:12px;height:12px"><use href="#i-clock"/></svg><span>New code in <span class="cd">0:42</span></span></div>
+            <div class="spacer"></div>
+            <div class="methods">
+              <div class="m on"><svg class="ico"><use href="#i-qr"/></svg>QR</div>
+              <div class="m"><svg class="ico"><use href="#i-near"/></svg>Nearby</div>
+              <div class="m"><svg class="ico"><use href="#i-tap"/></svg>Tap</div>
+              <div class="m"><svg class="ico"><use href="#i-link"/></svg>Link</div>
+            </div>
+          </div>
+        </div></div>
+        <figcaption><b>Share</b>The code changes every minute, so a photo of it can't be reused later. Nearby and Tap come in version 2.</figcaption>
+      </figure>
+
+      <!-- 3. Connected -->
+      <figure class="shot">
+        <div class="phone"><div class="screen">
+          <div class="sb"><span>4:13</span><span>5G ▮▮▮</span></div>
+          <div class="pad">
+            <div class="done"><svg class="ico"><use href="#i-check"/></svg></div>
+            <div class="ctr"><b>You're connected with Riya</b><span class="muted" style="font-size:10.5px">Riya sees your Quick card</span></div>
+            <div class="metnote"><svg class="ico"><use href="#i-pin"/></svg><div>Today, 4:12 PM · Blue Tokai, Baner<small>Private note. Only you see this.</small></div></div>
+            <div class="fields">
+              <div class="f"><svg class="ico"><use href="#i-insta"/></svg><div class="lbl"><small>Instagram</small><span>@riya.runs</span></div></div>
+              <div class="f"><svg class="ico"><use href="#i-in"/></svg><div class="lbl"><small>LinkedIn</small><span>in/riyas</span></div></div>
+            </div>
+            <div class="shield"><svg class="ico"><use href="#i-lock"/></svg>Phone numbers hidden on both sides</div>
+            <div class="spacer"></div>
+            <div class="btn"><svg class="ico"><use href="#i-chat"/></svg>Message Riya</div>
+            <div class="row2"><div class="btn ghost" style="font-size:11px"><svg class="ico"><use href="#i-save"/></svg>Save</div><div class="btn ghost" style="font-size:11px">Keep forever</div></div>
+          </div>
+        </div></div>
+        <figcaption><b>Connected</b>The "met at" note is private, so you remember who is who a week later. Nothing about your location is sent to the other person.</figcaption>
+      </figure>
+
+      <!-- 4. Chat -->
+      <figure class="shot">
+        <div class="phone"><div class="screen">
+          <div class="sb" style="background:var(--surface)"><span>6:30</span><span>5G ▮▮▮</span></div>
+          <div class="chat-h">
+            <svg class="ico" style="width:16px;height:16px"><use href="#i-back"/></svg>
+            <span class="av sun">RS</span>
+            <div class="t"><b>Riya</b><small>Connected today · expires in 6 days</small></div>
+          </div>
+          <div class="msgs">
+            <div class="shield"><svg class="ico"><use href="#i-lock"/></svg>You're chatting through Nodd. Neither of you can see the other's number.</div>
+            <div class="bub them">Hey, it's Riya from the café. Here's the Rajmachi trail I mentioned</div>
+            <div class="bub them">Weekend batches fill up fast</div>
+            <div class="bub me">Thanks! I'll send you the gear list tonight</div>
+            <div class="sys">You chose: keep this connection forever</div>
+            <div class="bub them">Perfect, see you Saturday</div>
+          </div>
+          <div class="compose">
+            <span class="rv">+ My number</span>
+            <span class="in">Message</span>
+            <span class="snd"><svg class="ico"><use href="#i-send"/></svg></span>
+          </div>
+        </div></div>
+        <figcaption><b>Private chat</b>Talk without numbers. "+ My number" shares it only when you decide to, one person at a time.</figcaption>
+      </figure>
+
+      <!-- 5. People -->
+      <figure class="shot">
+        <div class="phone"><div class="screen">
+          <div class="sb"><span>9:02</span><span>5G ▮▮▮</span></div>
+          <div class="pad">
+            <div class="app-h"><span style="font:700 17px/1 var(--display)">People</span><span class="av">AM</span></div>
+            <div class="srch"><svg class="ico"><use href="#i-search"/></svg>Search by name or place</div>
+            <div class="seg"><span class="on">All</span><span>Expiring</span><span>Kept</span></div>
+            <div class="plist">
+              <div class="pr"><span class="av sun">RS</span><div class="lbl"><b>Riya</b><small>Blue Tokai, Baner · Today</small></div><span class="tag saved">Kept</span></div>
+              <div class="pr"><span class="av">DK</span><div class="lbl"><b>Dev K.</b><small>Hackathon, COEP · 3 Oct</small></div><span class="tag left">2 days left</span></div>
+              <div class="pr swiped"><div class="slide"><span class="av">KB</span><div class="lbl"><b>Kabir</b><small>OLX · cycle deal · 26 Sep</small></div><span class="tag left">1 day left</span></div><span class="revoke">Revoke</span></div>
+              <div class="pr"><span class="av">MP</span><div class="lbl"><b>Meera</b><small>Train to Goa · 28 Sep</small></div><span class="tag exp">Expired</span></div>
+              <div class="pr"><span class="av">TJ</span><div class="lbl"><b>Tanvi J.</b><small>Design meetup · 20 Sep</small></div><span class="tag saved">Kept</span></div>
+            </div>
+          </div>
+        </div></div>
+        <figcaption><b>People</b>Everyone you met, with where and when. Swipe to revoke. Revoking closes the chat and hides your card from them.</figcaption>
+      </figure>
+
+      <!-- 6. Web card -->
+      <figure class="shot">
+        <div class="phone"><div class="screen">
+          <div class="sb" style="background:var(--sunk)"><span>4:12</span><span>5G ▮▮▮</span></div>
+          <div class="browser"><div class="urlbar"><svg class="ico" style="width:10px;height:10px"><use href="#i-lock"/></svg>nodd.app/c/x7k2q</div></div>
+          <div class="pad" style="padding-top:12px">
+            <div class="webcard">
+              <div class="who"><span class="av lg">AM</span><div><b>Aarav Mehta</b><small>Product designer · Pune</small></div></div>
+              <div>
+                <div class="lnk"><svg class="ico"><use href="#i-insta"/></svg>@aarav.makes</div>
+                <div class="lnk"><svg class="ico"><use href="#i-in"/></svg>in/aaravmehta</div>
+              </div>
+            </div>
+            <div class="btn"><svg class="ico"><use href="#i-chat"/></svg>Send Aarav a message</div>
+            <div class="btn ghost"><svg class="ico"><use href="#i-save"/></svg>Save to contacts</div>
+            <div class="spacer"></div>
+            <div class="shield" style="justify-content:center"><svg class="ico"><use href="#i-clock"/></svg>This card stops working on 21 Oct</div>
+            <p class="tiny" style="max-width:none">Get Nodd for Android to keep your number private too</p>
+          </div>
+        </div></div>
+        <figcaption><b>Web card</b>What someone without the app sees after scanning. They can message you from the browser, so they never need to install anything.</figcaption>
+      </figure>
+
+    </div>
+  </section>
+
+  <!-- ================= FEATURES ================= -->
+  <section id="features">
+    <p class="eyebrow">Scope</p>
+    <h2>Features: what's built and what's next</h2>
+    <div class="cols">
+      <div class="col v1">
+        <h3>Version 1 <span class="pill good">Built · in the app</span></h3>
+        <ul>
+          <li><div>Your card: name, mobile, email, work, Instagram, LinkedIn, website. <span>Saved only on your phone.</span></div></li>
+          <li><div>Switch each detail on or off for the QR.</div></li>
+          <li><div>The QR holds a standard contact card (vCard). <span>Android cameras, Google Lens and the iPhone camera all offer Add contact.</span></div></li>
+          <li><div>Full screen brightness while the QR shows.</div></li>
+          <li><div>Send as contact file. <span>Through WhatsApp, Quick Share or Bluetooth, for people who aren't nearby.</span></div></li>
+          <li><div>Built-in scanner. <span>Opens Add contact with the other person's details filled in.</span></div></li>
+          <li><div>This plan, inside the app.</div></li>
+          <li><div>No permission pop-ups. <span>The app never asks for camera or contacts access.</span></div></li>
+        </ul>
+      </div>
+      <div class="col v2">
+        <h3>Version 2 <span class="pill mid">Needs hosting</span></h3>
+        <ul>
+          <li><div>A private web link in the QR instead of your number.</div></li>
+          <li><div>Web card for people without the app. <span>Save contact or send a message from the browser.</span></div></li>
+          <li><div>Private chat with message requests.</div></li>
+          <li><div>Connections expire after 24 hours, 7 days, or never. <span>Revoke any time. The QR refreshes every minute.</span></div></li>
+          <li><div>Sign in with Google and back up your card.</div></li>
+          <li><div>Private "met at" notes and a People list.</div></li>
+          <li><div>Block, report, and delete account. <span>Required by Google Play once there's chat.</span></div></li>
+          <li><div>Later: Nearby, NFC tap, calls without numbers, event mode, iPhone app, Nodd Plus.</div></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= TECH ================= -->
+  <section id="tech">
+    <p class="eyebrow">Build</p>
+    <h2>Tech stack</h2>
+    <p class="lede">Version 1 runs entirely on the phone. Version 2 adds a small backend with a free tier.</p>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>Part</th><th>Choice</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td class="name">Mobile app<small>v1, built</small></td><td>Kotlin with Jetpack Compose</td><td>Native Android. Android Studio was already set up, so no extra tools were needed. Compose Multiplatform can add an iPhone app later.</td></tr>
+          <tr><td class="name">QR code<small>v1, built</small></td><td>ZXing</td><td>Makes the QR on the phone, offline.</td></tr>
+          <tr><td class="name">Scanner<small>v1, built</small></td><td>Google code scanner (ML Kit)</td><td>Google Play services runs the camera, so the app needs no camera permission.</td></tr>
+          <tr><td class="name">Saving contacts<small>v1, built</small></td><td>Android's own Add contact screen</td><td>The person taps Save. No contacts permission needed.</td></tr>
+          <tr><td class="name">Sign-in<small>v2</small></td><td>Firebase Auth with Google sign-in</td><td>Free, and no SMS costs because there is no phone OTP.</td></tr>
+          <tr><td class="name">Data and chat<small>v2</small></td><td>Cloud Firestore</td><td>Real-time chat. The free tier covers the first few thousand users.</td></tr>
+          <tr><td class="name">Server logic<small>v2</small></td><td>Cloud Functions</td><td>Rotating codes, expiry, revoking, spam limits.</td></tr>
+          <tr><td class="name">Notifications<small>v2</small></td><td>Firebase Cloud Messaging</td><td>Free push notifications.</td></tr>
+          <tr><td class="name">Web card<small>v2</small></td><td>Static site on Firebase Hosting</td><td>The other person needs only a browser.</td></tr>
+          <tr><td class="name">Abuse protection<small>v2</small></td><td>Firebase App Check and rate limits</td><td>Blocks bots and mass messaging.</td></tr>
+          <tr><td class="name">Calls<small>later</small></td><td>WebRTC with a TURN server</td><td>Calls without numbers. The cost grows with minutes, so it waits for proven demand.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ================= PLAY STORE ================= -->
+  <section id="playstore">
+    <p class="eyebrow">Publishing</p>
+    <h2>Getting onto Google Play</h2>
+    <p class="lede">The steps in order, with the rules as they stand in October 2026.</p>
+    <ol class="steps">
+      <li><div><h3>Choose the account type</h3><p><b>Personal:</b> needs your government ID and a 14-day closed test (step 6). <b>Organisation:</b> needs a registered business and a free D-U-N-S number, which can take a few weeks. It skips the closed-test rule and lists the business, not you, as the developer.</p></div></li>
+      <li><div><h3>Create the Play Console account</h3><p>Pay US$25 once (about ₹2,200). Verify your identity, then confirm you have a real Android device through the Play Console app.</p></div></li>
+      <li><div><h3>Build to Google's current bar</h3><p>New apps must target Android 16 (API level 36), which has been required since 31 August 2026. Upload as an Android App Bundle (.aab) with Play App Signing.</p></div></li>
+      <li><div><h3>Fill in the policy forms</h3><p>Privacy policy URL, Data safety form, content rating questionnaire, target audience (set it to 18+), ads declaration, and an account-deletion link that works both in the app and on the web.</p></div></li>
+      <li><div><h3>Prepare the store listing</h3><p>App name up to 30 characters, short description up to 80, full description up to 4,000. A 512×512 icon, a 1024×500 feature graphic, and 2 to 8 phone screenshots.</p></div></li>
+      <li><div><h3>Run the closed test</h3><p>At least 12 testers must stay opted in for 14 days in a row. Recruit 15 to 20 so a few dropping out doesn't restart the clock.</p></div></li>
+      <li><div><h3>Apply for production access</h3><p>Answer Google's questions about the test. The review usually takes a few days and can take longer for new accounts.</p></div></li>
+      <li><div><h3>Publish with a staged rollout</h3><p>Release to 20% of users first, watch for crashes, then go to 100%.</p></div></li>
+    </ol>
+    <div class="policy">
+      <h3>Rules that apply to this app in particular</h3>
+      <ul>
+        <li><b>Chat with strangers counts as user-generated content.</b> You need terms of use, in-app reporting, blocking, and someone who acts on reports.</li>
+        <li><b>Child safety standards for social apps.</b> Publish a child-safety standards page, include an in-app report button, and name a contact person. Setting the audience to 18+ also keeps the app out of the stricter Families rules.</li>
+        <li><b>Permissions.</b> Ask only for camera (QR), nearby devices, and NFC when those features ship. Save contacts through Android's own "Add contact" screen so you never need the contacts permission. Avoid background location.</li>
+        <li><b>India: IT Rules 2021.</b> Publish a grievance officer's name and contact in the app and on the website.</li>
+        <li><b>India: DPDP Act.</b> Most duties on notice, consent, user rights and security apply from 13 May 2027. Build consent and deletion in now so nothing needs rework later.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================= COST ================= -->
+  <section id="cost" class="cost">
+    <p class="eyebrow">Money</p>
+    <h2>What it costs to launch on Android</h2>
+    <p class="lede">First-year cash cost under three ways of building it. Build costs are rough Indian market ranges, so get three quotes before deciding.</p>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>Item</th><th class="r">Build it yourselves</th><th class="r">Hire a freelancer</th><th class="r">Hire an agency</th></tr></thead>
+        <tbody>
+          <tr><td>Google Play developer account (one-time, US$25)</td><td class="num-cell">₹2,200</td><td class="num-cell">₹2,200</td><td class="num-cell">₹2,200</td></tr>
+          <tr><td>Domain for the web card, per year</td><td class="num-cell">₹1,500</td><td class="num-cell">₹1,500</td><td class="num-cell">₹1,500</td></tr>
+          <tr><td>Logo, icon and store graphics</td><td class="num-cell">₹0–5,000</td><td class="num-cell">₹5,000–15,000</td><td class="num-cell">included</td></tr>
+          <tr><td>Privacy policy and terms (template, or lawyer review)</td><td class="num-cell">₹0–15,000</td><td class="num-cell">₹0–15,000</td><td class="num-cell">₹0–15,000</td></tr>
+          <tr><td>Building the MVP</td><td class="num-cell">₹0 (about 8 weeks of your time)</td><td class="num-cell">₹1.5–4 lakh</td><td class="num-cell">₹4–10 lakh</td></tr>
+          <tr><td>Servers, first 6 months (Firebase, under 10,000 users)</td><td class="num-cell">₹0–6,000</td><td class="num-cell">₹0–6,000</td><td class="num-cell">₹0–6,000</td></tr>
+          <tr class="total"><td>Total to launch</td><td class="num-cell">≈ ₹4,000–30,000</td><td class="num-cell">≈ ₹1.6–4.4 lakh</td><td class="num-cell">≈ ₹4–10.3 lakh</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="notes">
+      <p>Later costs: Apple developer account at US$99 per year (about ₹8,700) once you add the iPhone app. Voice calls add server costs that grow with usage.</p>
+      <p>Google keeps 15% of subscription revenue. A free app with no purchases pays Google nothing beyond the US$25.</p>
+      <p>Hosting for the version 2 web card can start free: Firebase Hosting, GitHub Pages and Cloudflare Pages all have free plans that fit a small static site.</p>
+      <p>Rupee figures assume about ₹88 to the US dollar.</p>
+    </div>
+  </section>
+
+  <!-- ================= TIMELINE ================= -->
+  <section id="timeline">
+    <p class="eyebrow">Schedule</p>
+    <h2>Twelve weeks to launch</h2>
+    <p class="lede">Assumes one full-time developer. Version 1 already exists, so week 1 starts with testing. The closed test is fixed by Google at 14 days and can't be shortened.</p>
+    <div class="gantt">
+      <div class="g-row g-head"><span class="g-label">Week</span><div class="g-track"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span></div></div>
+      <div class="g-row"><span class="g-label">Test version 1<small>Install the APK, try it at 2–3 events</small></span><div class="g-track"><span class="g-bar sun" style="--s:1;--e:3"></span></div></div>
+      <div class="g-row"><span class="g-label">Build version 2<small>Web card, chat, sign-in</small></span><div class="g-track"><span class="g-bar" style="--s:3;--e:9"></span></div></div>
+      <div class="g-row"><span class="g-label">Recruit testers<small>Aim for 15–20 people</small></span><div class="g-track"><span class="g-bar soft" style="--s:6;--e:9"></span></div></div>
+      <div class="g-row"><span class="g-label">Closed test<small>12+ testers, 14 days in a row</small></span><div class="g-track"><span class="g-bar" style="--s:9;--e:11"></span></div></div>
+      <div class="g-row"><span class="g-label">Production review<small>Store listing and Google review</small></span><div class="g-track"><span class="g-bar" style="--s:11;--e:12"></span></div></div>
+      <div class="g-row"><span class="g-label">Launch at an event<small>A college fest or meetup</small></span><div class="g-track"><span class="g-bar sun" style="--s:12;--e:13"></span></div></div>
+    </div>
+  </section>
+
+  <!-- ================= RISKS ================= -->
+  <section id="risks" class="risks">
+    <p class="eyebrow">Risks</p>
+    <h2>What could go wrong</h2>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>Risk</th><th>Why it matters</th><th>What we do about it</th></tr></thead>
+        <tbody>
+          <tr><td>Google and Apple already offer free swapping</td><td>Speed alone is not a reason to install another app.</td><td>Lead with privacy: no number, works across iPhone and Android, take it back any time.</td></tr>
+          <tr><td>Version 1 gives out your real number</td><td>Anyone who scans your QR can call or message you.</td><td>Switch Mobile off when you'd rather share Instagram or email. Version 2 swaps the number for a private link.</td></tr>
+          <tr><td>The other person doesn't have the app</td><td>Most strangers won't install an app on the spot.</td><td>In version 1 they don't need it: their camera saves you. In version 2 the web card and web chat cover it.</td></tr>
+          <tr><td>Harassment through stranger chat</td><td>User safety, and a Google Play policy requirement.</td><td>Message requests, block, report, rate limits, revoke, 18+ only.</td></tr>
+          <tr><td>Hard to make money</td><td>People rarely pay to share contact details.</td><td>Free core. Paid event mode for organisers, Nodd Plus for creators, NFC stickers.</td></tr>
+          <tr><td>Low daily use</td><td>People only open it when they meet someone.</td><td>Measure monthly use, not daily. The People list brings them back to recall who they met.</td></tr>
+          <tr><td>Calling costs</td><td>Voice servers charge by usage.</td><td>Chat only in version 1. Add calls once people ask for them.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ================= NAME ================= -->
+  <section id="name">
+    <p class="eyebrow">Naming</p>
+    <h2>The name</h2>
+    <div class="names">
+      <div class="pick">
+        <span class="eyebrow">Top pick</span>
+        <span class="big">Nodd<i>.</i></span>
+        <p class="tl">Swap contacts. Keep your number.</p>
+        <p>The small nod two strangers give each other before swapping details. Four letters, easy to say in English and Hindi, and it works as a verb: "Nodd me." A quick search found no Google Play app with this name in October 2026.</p>
+      </div>
+      <div class="alts">
+        <div class="alt"><b>Hushcard</b><span>Says "private" outright. Longer, and less fun to say.</span></div>
+        <div class="alt"><b>Milao</b><span>Hindi for "connect". Strong in India, harder to explain abroad.</span></div>
+        <div class="alt"><b>Pocketcard</b><span>Ties to "your number stays in your pocket". Clear but plain.</span></div>
+        <div class="alt"><b>Swapsy</b><span>Playful, fits students and events. Says nothing about privacy.</span></div>
+      </div>
+    </div>
+    <p class="muted" style="font-size:.92rem">Before committing to any name, check all four:</p>
+    <div class="check"><span>Google Play search</span><span>Domain: nodd.app or getnodd.com</span><span>IP India trademark search, classes 9 and 42</span><span>Instagram handle</span></div>
+  </section>
+
+  <!-- ================= DECISION ================= -->
+  <section id="decision">
+    <p class="eyebrow">Next step</p>
+    <h2>How to decide</h2>
+    <div class="decide">
+      <div class="must">
+        <h3>Go on to version 2 if a two-week test shows</h3>
+        <ul>
+          <li>At least half the people you show the QR to save you without any help.</li>
+          <li>At least 20 of 30 people you ask say they avoid giving their number to strangers.</li>
+          <li>One event organiser (college fest, meetup, co-working space) agrees to pilot it.</li>
+          <li>Someone on the team owns safety: reports, blocking, and the grievance contact.</li>
+        </ul>
+      </div>
+      <div class="rec">
+        <h3>My recommendation</h3>
+        <p>Worth building as a privacy app. Not worth building as a contact-swap app alone, because Google and Apple already give that away free.</p>
+        <p>Version 1 needs no hosting, so test it now. Install it on a few phones and take it to two or three real events. Watch whether people scan and save without help, and ask whether they'd rather not hand over their number. If they would, add hosting and build version 2. If they don't care, you have learned that for almost nothing.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sources" aria-label="Sources">
+    <h3 style="color:var(--ink)">Sources</h3>
+    <ul>
+      <li><a href="https://propakistani.pk/2026/08/13/android-phones-officially-get-iphones-namedrop-like-tap-to-share/" target="_blank" rel="noopener">Android phones get NameDrop-like Tap to Share (ProPakistani, Aug 2026)</a></li>
+      <li><a href="https://www.gizmochina.com/2026/04/11/googles-namedrop-like-contact-sharing-feature-is-called-tap-to-share/" target="_blank" rel="noopener">Google's contact sharing feature is called Tap to Share (Gizmochina)</a></li>
+      <li><a href="https://www.androidauthority.com/google-contact-gesture-exchange-apk-teardown-3615939/" target="_blank" rel="noopener">Google's take on NameDrop, first look (Android Authority)</a></li>
+      <li><a href="https://developer.android.com/google/play/requirements/target-sdk" target="_blank" rel="noopener">Target API level requirements (Android Developers)</a></li>
+      <li><a href="https://www.testerscommunity.com/blog/google-play-closed-testing-requirements-2026" target="_blank" rel="noopener">Closed testing requirements for new personal accounts, 2026</a></li>
+      <li><a href="https://extendsclass.com/blog/google-plays-closed-testing-requirement-what-developers-need-to-know-in-2026" target="_blank" rel="noopener">Google Play's closed testing requirement in 2026 (ExtendsClass)</a></li>
+      <li><a href="https://developer.android.com/developer-verification/guides" target="_blank" rel="noopener">Android developer verification (Android Developers)</a></li>
+      <li><a href="https://learn.microsoft.com/en-us/answers/questions/2140637/i-have-a-question-about-google-play-s-app-account" target="_blank" rel="noopener">Google Play account deletion requirement, quoted policy text</a></li>
+      <li><a href="https://www.mondaq.com/india/data-protection/1708164/digital-personal-data-protection-rules-2025-notified" target="_blank" rel="noopener">DPDP Rules 2025 notified (Mondaq)</a></li>
+      <li><a href="https://wavecnct.com/blogs/best-blinq-alternative" target="_blank" rel="noopener">Digital business card comparison (Wave, a competitor, so read with care)</a></li>
+      <li><a href="https://www.cloaked.com/post/how-to-mask-your-phone-number" target="_blank" rel="noopener">Masked phone numbers (Cloaked)</a></li>
+    </ul>
+  </section>
+
+  <p class="foot">Prepared 14 October 2026, and updated the same day when version 1 of the Android app was built. Costs are estimates. Policy details change, so check the current Play Console Help pages before you submit.</p>
+</div>
+
+<script>
+(function(){
+  function rng(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;var t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+  function drawQR(svg,seed){
+    var N=25,q=2,r=rng(seed),d='';
+    function finder(x,y){x+=q;y+=q;d+='M'+x+' '+y+'h7v7h-7zM'+(x+1)+' '+(y+1)+'v5h5v-5zM'+(x+2)+' '+(y+2)+'h3v3h-3z';}
+    finder(0,0);finder(N-7,0);finder(0,N-7);
+    function inF(x,y){return (x<8&&y<8)||(x>N-9&&y<8)||(x<8&&y>N-9);}
+    for(var y=0;y<N;y++){for(var x=0;x<N;x++){
+      if(inF(x,y))continue;
+      var on=(y===6)?(x%2===0):(x===6)?(y%2===0):(r()<0.47);
+      if(on)d+='M'+(x+q)+' '+(y+q)+'h1v1h-1z';
+    }}
+    svg.innerHTML='<rect width="29" height="29" style="fill:var(--qr-bg)"/><path d="'+d+'" fill-rule="evenodd" style="fill:var(--qr-fg)"/>';
+  }
+  var qrs=[].slice.call(document.querySelectorAll('.qr'));
+  qrs.forEach(function(s){drawQR(s,+s.getAttribute('data-seed'));});
+  var left=42,round=0,cds=document.querySelectorAll('.cd');
+  setInterval(function(){
+    left--;
+    if(left<0){left=59;round++;qrs.forEach(function(s){drawQR(s,+s.getAttribute('data-seed')+round*97);});}
+    var txt='0:'+(left<10?'0':'')+left;
+    for(var i=0;i<cds.length;i++)cds[i].textContent=txt;
+  },1000);
+})();
+</script>
